@@ -53,6 +53,7 @@ if(IS_PY3 AND USE_SYSTEM_LIBMPDEC)
 endif()
 
 if(USE_SYSTEM_OpenSSL)
+    message("OPENSSL_ROOT_DIR:${OPENSSL_ROOT_DIR}")
     find_package(OpenSSL 0.9.7)
 endif()
 
