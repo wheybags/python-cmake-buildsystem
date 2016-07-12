@@ -27,6 +27,8 @@ before_script: |
     brew update
     brew install openssl
   fi
+  ls /usr/local/opt/openssl/include
+  ls /usr/local/opt/openssl/lib
   wget -P /tmp/ https://raw.githubusercontent.com/davidsansome/python-cmake-buildsystem/dashboard/travis_dashboard.cmake
 
 script:
