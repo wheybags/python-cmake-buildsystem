@@ -9,7 +9,6 @@ compiler:
 
 env:
  - PY_VERSION=3.5.2
- - PY_VERSION=2.7.11
 
 sudo: false
 
@@ -23,8 +22,12 @@ addons:
     packages:
      - libssl-dev
 
-before_script:
- - wget -P /tmp/ https://raw.githubusercontent.com/davidsansome/python-cmake-buildsystem/dashboard/travis_dashboard.cmake
+before_script: |
+  if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+    brew update
+    brew install openssl
+  fi
+  wget -P /tmp/ https://raw.githubusercontent.com/davidsansome/python-cmake-buildsystem/dashboard/travis_dashboard.cmake
 
 script:
  - ctest -VV -S /tmp/travis_dashboard.cmake
