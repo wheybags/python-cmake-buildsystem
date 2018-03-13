@@ -23,6 +23,14 @@ if(APPLE)
   message(STATUS "${_msg} - ${MACOSX_DEPLOYMENT_TARGET}")
 endif()
 
+include(cmake/HunterGate.cmake)
+
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.20.16.tar.gz"
+    SHA1 "1a9bb8a7c53484adc792a6d606eb4870da11fa1c"
+    LOCAL
+)
+
 project(Python C ASM)
 
 if(POLICY CMP0042)
@@ -95,7 +103,14 @@ macro(append_if_absent VARNAME VALUE)
     endif()
 endmacro()
 
-option(USE_SYSTEM_LIBRARIES "Use system libraries" ON)
+option(USE_SYSTEM_LIBRARIES "Use system libraries" OFF)
+option(USE_HUNTER_LIBRARIES "use hunter to download all dependencies" ON)
+
+if (${USE_SYSTEM_LIBRARIES} AND ${USE_HUNTER_LIBRARIES})
+    message(FATAL_ERROR "cannot use system libs and hunter together")
+endif()
+
+#if (USE_SYSTEM_LIBRAR
 
 # Set platform dependent defaults
 set(_use_builtin_zlib_default OFF)
@@ -105,23 +120,22 @@ if(WIN32)
   set(_use_system_zlib_default OFF)
 endif()
 
-cmake_dependent_option(USE_SYSTEM_BZip2 "Use system BZip2" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_Curses "Use system Curses" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_EXPAT "Use system EXPAT" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_OpenSSL "Use system OpenSSL" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_TCL "Use system TCL" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_ZLIB "Use system ZLIB" ${_use_system_zlib_default} "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_DB "Use system DB" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_GDBM "Use system GDBM" ON "USE_SYSTEM_LIBRARIES" OFF)
-cmake_dependent_option(USE_SYSTEM_READLINE "Use system READLINE" ON "USE_SYSTEM_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_BZip2 "Use system BZip2" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_Curses "Use system Curses" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_EXPAT "Use system EXPAT" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_OpenSSL "Use system OpenSSL" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_TCL "Use system TCL" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_ZLIB "Use system ZLIB" ${_use_system_zlib_default} "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_DB "Use system DB" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_GDBM "Use system GDBM" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
+cmake_dependent_option(USE_SYSTEM_READLINE "Use system READLINE" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
 if(IS_PY3)
-  cmake_dependent_option(USE_SYSTEM_LIBMPDEC "Use system LIBMPDEC" ON "USE_SYSTEM_LIBRARIES" OFF)
+  cmake_dependent_option(USE_SYSTEM_LIBMPDEC "Use system LIBMPDEC" ON "USE_SYSTEM_LIBRARIES; NOT USE_HUNTER_LIBRARIES" OFF)
 endif()
 
-cmake_dependent_option(USE_BUILTIN_ZLIB "Use builtin ZLIB" ${_use_builtin_zlib_default} "NOT USE_SYSTEM_ZLIB" OFF)
+cmake_dependent_option(USE_BUILTIN_ZLIB "Use builtin ZLIB" ${_use_builtin_zlib_default} "NOT USE_SYSTEM_ZLIB; NOT USE_HUNTER_LIBRARIES" OFF)
 
-cmake_dependent_option(USE_LIBEDIT "Use libedit instead of readline" OFF
-                       "USE_SYSTEM_READLINE" OFF)
+cmake_dependent_option(USE_LIBEDIT "Use libedit instead of readline" OFF "USE_SYSTEM_READLINE" OFF)
 
 option(WITH_TSC "profile with the Pentium timestamp counter" OFF)
 option(ENABLE_IPV6 "Enable IP v6" ON)

@@ -13,6 +13,8 @@ Makefile
 /Misc/
 /share/
 
+/build/
+
 # Ignore all dotfiles...
 .*
 !.circleci-matrix.yml
