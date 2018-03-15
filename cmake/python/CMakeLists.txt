@@ -5,6 +5,10 @@ set(PYTHON_SOURCES
     ${SRC_DIR}/${subdir_${PY_VERSION_MAJOR}}/python.c
 )
 
+if(LINUX)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/")
+endif()
+
 add_executable(python ${PYTHON_SOURCES})
 set_property(
     TARGET python
